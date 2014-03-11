@@ -1,8 +1,10 @@
 const int trigPin = 2;
 const int echoPin = 4;
 
-const int RecieveSetupBit = 8;
-const int SendSetupBit = 9;
+const int SendSetupBit = 5;
+const int RecieveSetupBit = 6;
+const int ChangeinSensor = 7;
+const int HardwareError = 8;
 
 const int DelayVar = 100;
 
@@ -13,35 +15,93 @@ boolean FinalSetup = false;
 // establish variables for duration of the ping, 
 // and the distance result in inches and centimeters:
 long duration, inches, cm, MaxDistance = 0;
-int ConditionVariable = 0;
 int SafetyNet = 3;
 
 void setup() {
   // initialize serial communication:
   Serial.begin(9600);
+
+  for(int i=8; i<11; i++) {
+     pinMode(i, OUTPUT);
+     digitalWrite(i, LOW);
+  }
+  digitalWrite(8, HIGH);
+  Serial.print(9);
+  while(FinalSetup == false) {
+
+    if(Serial.available() > 0) {            //needs serial communication for it to work, either java or serial monitor
+      int IncomingByte = Serial.read()-'0';
+    
+      if(IncomingByte != RecieveSetupBit) {
+        Serial.println(SendSetupBit);
+      
+      } else {
+        FinalSetup = true;
+      } 
+    
+      delay(DelayVar);
+      
+    }  else {
+      Serial.println("ERROR..............");
+    } 
+    
+  } 
   
-  while (millis() < 5000) { 
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+  
+  
+  while(millis() < 8000) { 
     UltraSonic();
     Serial.println(cm);
     
     if(cm > MaxDistance) {
       MaxDistance = cm;
     }
-    
+      
   }
   
-  Serial.println("Cal Dis: ");
-  Serial.println(MaxDistance);
-  Serial.println("Setup Done");
-  
+  digitalWrite(9, LOW);
+  digitalWrite(10, HIGH);
+
 }
 
 void loop() {
-    UltraSonic();
+  
     Serial.println(cm);
+    Serial.println(MaxDistance);
+    Serial.println(" ");
+    delay(1000);
     
-    if(cm < (MaxDistance-SafetyNet)) {
-      Serial.println("Report");
+    if(Serial.available() > 0) {  //needs serial communication for it to work, either java or serial monitor
+      
+      Serial.flush();
+      
+      digitalWrite(8, LOW);
+      digitalWrite(9, LOW);
+      digitalWrite(10, HIGH);
+  
+      UltraSonic();
+      Serial.println(cm);
+      
+      if(cm < (MaxDistance-SafetyNet)) {
+        Serial.println("Report");
+        Serial.print(ChangeinSensor);
+      
+      } else if(cm <= 0){
+        Serial.print(HardwareError);
+      
+      } else {
+        digitalWrite(8, HIGH);
+        digitalWrite(9, LOW);
+        digitalWrite(10, LOW);
+      }
+      
+    digitalWrite(12, LOW);
+    delay(100);
+    
+    }  else {
+      Serial.println("ERROR..............");
     }
 }
   

@@ -1,6 +1,6 @@
 /**
  * @authors		Andrew Spackman, Josh Ravenscroft	
- * @version		0.3 - 11/03/2014
+ * @version		0.4 - 12/03/2014
  */
 
 import gnu.io.CommPortIdentifier;
@@ -30,7 +30,7 @@ public class SendEmail {
     static String host = "smtp.gmail.com";						// For gmail, use "smtp.gmail.com" For yahoo, use "smtp.mail.yahoo.com"
     static String portformail = "465";							// Port should be 465 if from within University. Otherwise, use 587
     
-	 public static void readFromArduino() throws Exception{
+	public static void readFromArduino() throws Exception{
 			
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
 			
@@ -44,28 +44,26 @@ public class SendEmail {
 			while (true) {
 				if (input.available()>0) {
 					System.out.print((char)(input.read()));
-					
-					}
+						}
 				}
-	 }
+	 	}
 
-	 
-		public static void sendToArduino (int command) {
-			try {
-				CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
-				SerialPort port = (SerialPort)portId.open("serial talk", 4000);
-				output = port.getOutputStream();
-				port.setSerialPortParams(9600,
-						SerialPort.DATABITS_8,
-						SerialPort.STOPBITS_1,
-						SerialPort.PARITY_NONE);
+	// public static void sendToArduino (int command) {
+	//	try {
+	//		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
+	//		SerialPort port = (SerialPort)portId.open("serial talk", 4000);
+	//		output = port.getOutputStream();
+	//		port.setSerialPortParams(9600,
+	//				SerialPort.DATABITS_8,
+	//				SerialPort.STOPBITS_1,
+	//				SerialPort.PARITY_NONE);
 				
-					output.flush();
-				port.close();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
+	//			output.flush();
+	//			port.close();
+	//		} catch (Exception ex) {
+	//			ex.printStackTrace();
+	//			}
+	//	}
 		
 	 public static void sendFromGMail(String host, String port, String from, String pass, String[] to, String subject, String body) {
 	    	Properties props = System.getProperties();
@@ -103,33 +101,14 @@ public class SendEmail {
 	        
 	 }
 		
-public static void main(String[] args) throws Exception{
+	 public static void main(String[] args) throws Exception{
     	
-	Date date = new Date();
-
+		Date date = new Date();
+		
 		//String subject = "Security Breach Notification" ;
 		//String body = "Security was breached on " + (date.toString());
 		//sendFromGMail(host, portformail, from, password, to, subject, body);
-
-	while (true) {
 		
-		//Scanner reader = new Scanner(System.in);
-        //System.out.print(input);
-
-		try {
-
-		  Thread.sleep(1000L);    // one second
-
-		}
-
-		catch (Exception e) {}     // this never happen... nobody check for it
-
-        int command = 6;
-	    sendToArduino(command);
-        System.out.println(command);
-        
-		}
-	    
 		}
 	    
 	}

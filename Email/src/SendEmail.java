@@ -1,6 +1,6 @@
 /**
  * @authors		Andrew Spackman, Josh Ravenscroft	
- * @version		0.4 - 12/03/2014
+ * @version		0.5 - 13/03/2014
  */
 
 import gnu.io.CommPortIdentifier;
@@ -32,6 +32,7 @@ public class SendEmail {
     
 	public static void readFromArduino() throws Exception{
 			
+		try{
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
 			
 			SerialPort port = (SerialPort)portId.open("serial talk", 4000);
@@ -41,11 +42,19 @@ public class SendEmail {
 					SerialPort.STOPBITS_1,
 					SerialPort.PARITY_NONE);
 	 
+			if (input==null) {
+				System.out.print("Input stream is NUll"); }
+			
+			
 			while (true) {
 				if (input.available()>0) {
-					System.out.print((char)(input.read()));
-						}
+					System.out.print((char)(input.read())); }
 				}
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+			
+		}
 	 	}
 
 	// public static void sendToArduino (int command) {
@@ -104,6 +113,9 @@ public class SendEmail {
 	 public static void main(String[] args) throws Exception{
     	
 		Date date = new Date();
+		System.out.println("Testing!");
+		
+		readFromArduino();
 		
 		//String subject = "Security Breach Notification" ;
 		//String body = "Security was breached on " + (date.toString());
@@ -112,3 +124,4 @@ public class SendEmail {
 		}
 	    
 	}
+

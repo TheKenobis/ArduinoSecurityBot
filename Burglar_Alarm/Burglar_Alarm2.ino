@@ -91,7 +91,11 @@ void loop() {
       } else if(cm <= 0){
         Serial.print(HardwareError);
       
-      } else {
+      }else if(cm > MaxDistance+SafetyNet){
+        MaxDistance = cm;
+      }
+     
+      else {
         digitalWrite(8, HIGH);
         digitalWrite(9, LOW);
         digitalWrite(10, LOW);
@@ -133,3 +137,4 @@ long microsecondsToCentimeters(long microseconds) {
     // object we take half of the distance travelled.
     return microseconds / 29 / 2;
 }
+

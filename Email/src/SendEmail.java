@@ -1,6 +1,6 @@
 /**
  * @authors		Andrew Spackman, Josh Ravenscroft	
- * @version		0.7 - 18/03/2014
+ * @version		0.8 - 19/03/2014
  */
 
 import gnu.io.CommPortIdentifier;	
@@ -29,13 +29,14 @@ public class SendEmail {										// Begin program
     static String[] to = { "s1309454@connect.glos.ac.uk" }; 	// Recipient Email Address. This can be assigned multiple values
     static String host = "smtp.gmail.com";						// For gmail, use "smtp.gmail.com" For yahoo, use "smtp.mail.yahoo.com"
     static String portformail = "465";							// Port should be 465 if from within University. Otherwise, use 587
+    static SerialPort port = null;
     
 	public static void readFromArduino() throws Exception{		// Code to read value from Arduino
 			
 		try{													// Try/Catch for testing
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
 																// Set Com port 5
-			SerialPort port = (SerialPort)portId.open("serial talk", 4000);
+			port = (SerialPort)portId.open("serial talk", 4000);
 			input = port.getInputStream();
 			port.setSerialPortParams(9600,
 					SerialPort.DATABITS_8,
@@ -44,12 +45,12 @@ public class SendEmail {										// Begin program
 																// Establish communication through Com port
 			while (true) {
 				if (input.available()>0) {
-					int value=input.read();
-					System.out.print((char)(value)); 
+					int number=input.read() - '0';
+					System.out.print((char)(number));
 																// Print value from Com port, if not 0
-					processInoutValueFromArduino(value);		// Initiate process to determine outcome, in relation to the recieved value
+					processInoutValueFromArduino(number);		// Initiate process to determine outcome, in relation to the recieved value
 				}
-				}
+			}
 			
 		}catch(Exception ex){									// If anything goes wrong, with the above code, do the following 
 			ex.printStackTrace();								// Print the problem to help diagnose the solution
@@ -60,13 +61,15 @@ public class SendEmail {										// Begin program
 	
 	public static void processInoutValueFromArduino(int input){
 																// Process to determine next steps in relation to Com port input
-		Date date = new Date();									// Define date for use with email code
-		
+		//System.out.println("Inside processInoutValueFromArduino input="+input);
 		if (input == 5) {
-			sendToArduino(6);									// Initialisation code.
+			sendToArduino(6);
 		}
 		
-		if (input == 7) {										// If a 7 is received from the Arduino,
+		else if (input == 7) {									// If a 7 is received from the Arduino,
+			
+			Date date = new Date();								// Define date for use with email code
+			
 			String subject = "Security Breach Notification" ;
 																// Create email subject with the above content
 			String body = "Security was breached on " + (date.toString());
@@ -76,7 +79,8 @@ public class SendEmail {										// Begin program
 																// The strings for this are found above as declared variables
 		}
 
-		if (input == 8) {										// If an 8 is received from the Arduino,
+		else if (input == 8) {									// If an 8 is received from the Arduino,
+			Date date = new Date();								// Define date for use with email code
 			String subject = "Program Error" ;					// Send a different email with the following values
 			String body = "An error has occured with the program on " + (date.toString());
 			sendFromGMail(host, portformail, from, password, to, subject, body);
@@ -89,13 +93,13 @@ public class SendEmail {										// Begin program
 		try {
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
 																// Set Com port 5
-			SerialPort port = (SerialPort)portId.open("serial talk", 4000);
 			output = port.getOutputStream();
 			port.setSerialPortParams(9600,
 					SerialPort.DATABITS_8,
 					SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE);
-																// Establish communication through Com port
+					SerialPort.PARITY_NONE);					// Establish Com port communication properties
+			
+			output.write((command + "").getBytes());
 				output.flush();									// Output is flushed; stops memory leak and potential errors
 				port.close();									// Port is closed after use
 			} 
@@ -146,10 +150,9 @@ public class SendEmail {										// Begin program
 	 }
 		
 	 public static void main(String[] args) throws Exception{	
-		 														// Initiation code for the initial "readFromArduino" code
-			readFromArduino();
-			// processInoutValueFromArduino(7);					// Test line, for when a physical Arduino is unavailable
-
+		 														// Initiation code for the initial "readFromArduino" code		
+		readFromArduino();
+		//processInoutValueFromArduino(8);					// Test line, for when a physical Arduino is unavailable
 	 }
 	 
 }

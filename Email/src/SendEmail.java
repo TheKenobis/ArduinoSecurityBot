@@ -45,8 +45,10 @@ public class SendEmail {										// Begin program
 																// Establish communication through Com port
 			while (true) {
 				if (input.available()>0) {
+					//int number=input.read() - '0';
 					int number=input.read() - '0';
-					System.out.print((char)(number));
+					//System.out.print((char)(number));
+					System.out.println(("Input = " + number));
 																// Print value from Com port, if not 0
 					processInoutValueFromArduino(number);		// Initiate process to determine outcome, in relation to the recieved value
 				}
@@ -61,7 +63,6 @@ public class SendEmail {										// Begin program
 	
 	public static void processInoutValueFromArduino(int input){
 																// Process to determine next steps in relation to Com port input
-		//System.out.println("Inside processInoutValueFromArduino input="+input);
 		if (input == 5) {
 			sendToArduino(6);
 		}
@@ -81,8 +82,8 @@ public class SendEmail {										// Begin program
 
 		else if (input == 8) {									// If an 8 is received from the Arduino,
 			Date date = new Date();								// Define date for use with email code
-			String subject = "Program Error" ;					// Send a different email with the following values
-			String body = "An error has occured with the program on " + (date.toString());
+			String subject = "Hardware Error" ;					// Send a different email with the following values
+			String body = "An error has occured with the hardware on " + (date.toString());
 			sendFromGMail(host, portformail, from, password, to, subject, body);
 		}
 		
@@ -101,7 +102,7 @@ public class SendEmail {										// Begin program
 			
 			output.write((command + "").getBytes());
 				output.flush();									// Output is flushed; stops memory leak and potential errors
-				port.close();									// Port is closed after use
+				//port.close();									// Port is closed after use
 			} 
 		
 			catch (Exception ex) {								// If anything goes wrong, with the above code, do the following 

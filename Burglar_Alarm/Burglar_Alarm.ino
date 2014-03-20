@@ -12,6 +12,7 @@ const int HardwareError = 8;
 const int DelayVar = 2000;
 const int DelaySec = 100;
 
+//Booelan variable used in making sure that harware is connected to the java program
 boolean FinalSetup = false;
 
 //Vaules which will be used while the senso is activated
@@ -29,10 +30,8 @@ void setup() {
      digitalWrite(i, LOW);
   }  
   
-  //Turns the red led on
-  digitalWrite(8, HIGH);  
-  digitalWrite(9, LOW);
-  digitalWrite(10, LOW);
+  //Calls the 'RedLight' function
+  RedLight();
   
   //while loop which prevents the arduino from starting, before it is connected to the java program  
   while(FinalSetup == false) {
@@ -51,19 +50,15 @@ void setup() {
       
   }
   
-  //Turns the yellow led on, red off
-  digitalWrite(8, LOW);
-  digitalWrite(9, HIGH);
-  digitalWrite(10, LOW);
+  //Calls the 'YellowLight' function
+  YellowLight();
   delay(1);
   
-  //Calls the 'Calibration' subroutine
+  //Calls the 'Calibration' function
   Calibration();
   
-  //Turns the yellow led off, the green on
-  digitalWrite(8, LOW);
-  digitalWrite(9, LOW);
-  digitalWrite(10, HIGH);
+  //Calls the 'GreenLight' function
+  Greenlight();
   delay(2000);
 
 }
@@ -81,10 +76,8 @@ void loop() {
     //Prints to the serial port the number 7
     Serial.println(ChangeinSensor); 
     
-    //Turns the red led on, the green off
-    digitalWrite(8, HIGH);
-    digitalWrite(9, LOW);  
-    digitalWrite(10, LOW);  
+    //Calls the 'RedLight' function
+    RedLight();  
     
     //delay has been introduced to aviod spam, delay of 10 secs
     delay(10000);
@@ -98,35 +91,48 @@ void loop() {
   //    
   } else if(cm > (MaxDistance+SafetyNet) {
     
-    //Turns the yellow led on, the other off
-    digitalWrite(8, LOW);
-    digitalWrite(9, HIGH);  
-    digitalWrite(10, LOW);  
+    //Calls the 'YellowLight' function
+    YellowLight();  
 
-    //Calls the 'Calibration' subroutine
+    //Calls the 'Calibration' function
     Calibration();    
 
-    //Turns the green led on, the other off
-    digitalWrite(8, LOW);
-    digitalWrite(9, LOW);  
-    digitalWrite(10, HIGH);  
-    
+    //Calls the 'GreenLight' function
+    GreenLight();  
     
   } else{
-    //Turns the green led on, the other off
-    digitalWrite(8, LOW);
-    digitalWrite(9, LOW);  
-    digitalWrite(10, HIGH);  
-
-  
+    //Calls the 'GreenLight' function
+    GreenLight();  
   }
 }
 
+//The function which turns the red light on
+void RedLight() {
+  digitalWrite(8, LOW);  
+  digitalWrite(9, LOW);
+  digitalWrite(10, HIGH);
+}
+
+//The function which turns the yellow light on
+void YellowLight() {
+  digitalWrite(8, LOW);  
+  digitalWrite(9, HIGH);
+  digitalWrite(10, LOW);
+}
+
+//The function which turns the green light on
+void GreenLight() {
+  digitalWrite(8, LOW);  
+  digitalWrite(9, LOW);
+  digitalWrite(10, HIGH);  
+}
+
+//The function which maps the door frame width
 void Calibration() {
   
   //While loop lasts for about 5 secs, for best results 
   while(millis() < 8000) { 
-    //Calls the 'UltraSonic' subroutine
+    //Calls the 'UltraSonic' function
     UltraSonic();
     
     //Allows the adjustment of the 'MaxDistance', this is done to allow the product to be used in different door frames etc
@@ -137,6 +143,7 @@ void Calibration() {
   }
 }
 
+//The functiion which controls the ultra sonic sensor
 void UltraSonic() {  
     // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
     // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:

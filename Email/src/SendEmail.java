@@ -1,8 +1,9 @@
 /**
  * @authors		Andrew Spackman, Josh Ravenscroft	
- * @version		0.8 - 19/03/2014
+ * @version		0.9 - 25/03/2014
  */
 
+import glos.IO;
 import gnu.io.CommPortIdentifier;	
 import gnu.io.SerialPort;
 
@@ -24,8 +25,10 @@ public class SendEmail {										// Begin program
 	static InputStream input;									// Define InputStream as input
     static OutputStream output;
     
-    static String from = "s1309454@gmail.com";					// Sender's email address. Currently using my (Andrew's) email account.
-    static String password = "6v,.6v,.6v,.";					// Password of the sender.
+    //static String from = "s1309454@gmail.com";				// Sender's email address. Currently using my (Andrew's) email account.
+    static String from = "";									// Sender's email address. This is defined below as textual input from the user.
+    //static String password = "6v,.6v,.6v,.";					// Password of the sender.
+    static String password ="";									// Password of the sender. This is defined below as textual input from the user.
     static String[] to = { "s1309454@connect.glos.ac.uk" }; 	// Recipient Email Address. This can be assigned multiple values
     static String host = "smtp.gmail.com";						// For gmail, use "smtp.gmail.com" For yahoo, use "smtp.mail.yahoo.com"
     static String portformail = "465";							// Port should be 465 if from within University. Otherwise, use 587
@@ -34,7 +37,7 @@ public class SendEmail {										// Begin program
 	public static void readFromArduino() throws Exception{		// Code to read value from Arduino
 			
 		try{													// Try/Catch for testing
-			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
+			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM4");
 																// Set Com port 5
 			port = (SerialPort)portId.open("serial talk", 4000);
 			input = port.getInputStream();
@@ -49,6 +52,7 @@ public class SendEmail {										// Begin program
 					int number=input.read() - '0';
 					//System.out.print((char)(number));
 					System.out.println(("Input = " + number));
+					System.out.println(("Processing..."));
 																// Print value from Com port, if not 0
 					processInoutValueFromArduino(number);		// Initiate process to determine outcome, in relation to the recieved value
 				}
@@ -92,7 +96,7 @@ public class SendEmail {										// Begin program
 	public static void sendToArduino (int command) {			// Code to send value to Arduino
 		
 		try {
-			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM5");
+			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("COM4");
 																// Set Com port 5
 			output = port.getOutputStream();
 			port.setSerialPortParams(9600,
@@ -139,7 +143,7 @@ public class SendEmail {										// Begin program
 	            transport.connect(host, from, pass);
 	            transport.sendMessage(message, message.getAllRecipients());
 	            transport.close();								// Creating an SMTP connection, sending an email and then closing the connection
-	            System.out.println("Email sent");				// Confirming the email has been sent with a confirmation message
+	            System.out.println("Email sent successfully!");				// Confirming the email has been sent with a confirmation message
 	        	}
 	        
 	        catch (Exception ex) {								// If anything goes wrong, with the above code, do the following 
@@ -151,9 +155,14 @@ public class SendEmail {										// Begin program
 	 }
 		
 	 public static void main(String[] args) throws Exception{	
-		 														// Initiation code for the initial "readFromArduino" code		
+		
+		IO.display("Arduino Security Robot. Press OK to continue.");
+		from=IO.readString("Enter gmail address: example@gmail.com");
+		password=IO.readString("Enter password");
+		// Initiation code for the initial "readFromArduino" code		
 		readFromArduino();
 		//processInoutValueFromArduino(8);					// Test line, for when a physical Arduino is unavailable
+		IO.display("Arduino Security Robot has finished running.");
 	 }
 	 
 }

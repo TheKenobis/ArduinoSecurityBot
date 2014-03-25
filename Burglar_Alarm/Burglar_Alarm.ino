@@ -1,8 +1,10 @@
+//@authors		Carl Berquist, Reece Kelly
+
 //Ultra sonic sensor pin numbers
 const int trigPin = 2;
 const int echoPin = 4;
 
-//Vaules which will be used during the java communication phase
+//Values which will be used during the java communication phase
 const int SendSetupBit = 5;
 const int RecieveSetupBit = 6;
 const int ChangeinSensor = 7;
@@ -12,10 +14,10 @@ const int HardwareError = 8;
 const int DelayVar = 2000;
 const int DelaySec = 100;
 
-//Booelan variable used in making sure that harware is connected to the java program
+//Boolean variable used in making sure that hardware is connected to the java program
 boolean FinalSetup = false;
 
-//Vaules which will be used while the senso is activated
+//Values which will be used while the sensor is activated
 long duration, cm, MaxDistance = 0;
 //Value will help prevent false alarms, as sensor can sometimes produce vaules higher or lower than the real value being produced
 int SafetyNet = 3;
@@ -58,7 +60,7 @@ void setup() {
   Calibration();
   
   //Calls the 'GreenLight' function
-  Greenlight();
+  GreenLight();
   delay(2000);
 
 }
@@ -70,7 +72,7 @@ void loop() {
   //Small delay prevents the program from running to quick and skipping code
   delay(1);
   
-  //If statenment is to check that there has been has been any motion
+  //If statement is to check that there has been has been any motion
   if(cm < (MaxDistance-SafetyNet)) { //code when enemy is near
     
     //Prints to the serial port the number 7
@@ -79,7 +81,7 @@ void loop() {
     //Calls the 'RedLight' function
     RedLight();  
     
-    //delay has been introduced to aviod spam, delay of 10 secs
+    //delay has been introduced to avoid spam, delay of 10 secs
     delay(10000);
   
   //This else if statement is used to detect if the hardware is not working properly    
@@ -89,7 +91,7 @@ void loop() {
     delay(10000);
   
   //    
-  } else if(cm > (MaxDistance+SafetyNet) {
+  } else if(cm > (MaxDistance+SafetyNet)) {
     
     //Calls the 'YellowLight' function
     YellowLight();  
@@ -130,7 +132,7 @@ void GreenLight() {
 //The function which maps the door frame width
 void Calibration() {
   
-  //While loop lasts for about 5 secs, for best results 
+  //While loop lasts for about 5 seconds, for best results 
   while(millis() < 8000) { 
     //Calls the 'UltraSonic' function
     UltraSonic();
@@ -139,11 +141,14 @@ void Calibration() {
     if(cm > MaxDistance) {
       MaxDistance = cm;
     }
-      
+    //Ultra sonic sensor maximum range is 2 meters
+    if(MaxDistance > 2000){
+      MaxDistance = 2000;
+    } 
   }
 }
 
-//The functiion which controls the ultra sonic sensor
+//The function which controls the ultra sonic sensor
 void UltraSonic() {  
     // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
     // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:

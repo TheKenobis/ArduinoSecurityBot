@@ -1,6 +1,6 @@
 /**
  * @authors		Andrew Spackman, Josh Ravenscroft	
- * @version		0.9 - 25/03/2014
+ * @version		1.0 (Final) - 26/03/2014
  */
 
 import glos.IO;
@@ -72,7 +72,7 @@ public class SendEmail {										// Begin program
 		}
 		
 		else if (input == 7) {									// If a 7 is received from the Arduino,
-			
+																// Begin email process
 			Date date = new Date();								// Define date for use with email code
 			
 			String subject = "Security Breach Notification" ;
